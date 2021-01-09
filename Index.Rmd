@@ -1,0 +1,321 @@
+---
+title: "PROGRAMA CAPACITACIÓN EN CIENCIA DE DATOS"
+subtitle: "Curso: Desarrollo de aplicaciones shiny I"
+author: "Karen Calva"
+institute: "Sociedad Ecuatoriana de Estadística"
+date: "Enero-2021"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "macros.js" 
+      ratio: "16:9"
+
+---
+class: hide_logo 
+background-image: url("Imagenes/Logo-BanderaCorregida_con_curva_peque.png")
+
+
+```{css, echo = FALSE}
+.huge .remark-code { /*Change made here*/
+  font-size: 150% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 75% !important;
+}
+
+```
+
+```{r xaringan-logo, echo=FALSE, message=FALSE, warning=FALSE}
+#install.packages("devtools")
+#library(devtools)
+#devtools::install_github("gadenbuie/xaringanExtra")
+library(xaringanExtra)
+xaringanExtra::use_logo(
+  image_url = "Imagenes/Top_Logo.png",
+  width = "800px",
+  height = "50px",
+  position = css_position(top = 0, right = "0.4em", left= NULL, bottom= NULL)
+)
+xaringanExtra::use_fit_screen()
+options(htmltools.dir.version = FALSE)
+
+```
+
+
+
+---
+class: inverse, center, middle, hide_logo
+
+# Introducción
+
+## Curso: Desarrollo de aplicaciones shiny 
+### Karen Calva | Sociedad Ecuatoriana de Estadística
+
+
+---
+class: center, middle, hide_logo
+
+# 1. Motivación 
+
+
+---
+
+- R es una herramienta potente y muy flexible para analizar y visualizar datos. **Shiny** es el compañero perfecto para R, lo que hace que sea rápido y sencillo compartir análisis y gráficos de R con los que los usuarios pueden interactuar y consultar en la Web.
+
+- En este curso aprenderemos haciendo, cada tema incluye código y ejemplos para usar y adaptar para sus propias aplicaciones. Al final de este curso, podrán crear aplicaciones web útiles y atractivas con solo unas pocas líneas de código, sin necesidad de JavaScript.
+
+- Presentaremos un nuevo estilo de programación llamado programación reactiva que rastrea automáticamente las dependencias de un fragmento de código. Esto significa que cada vez que cambia una entrada, **Shiny** puede descubrir automáticamente cómo hacer la menor cantidad de trabajo para actualizar todas las salidas relacionadas.
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='50%'}
+knitr::include_graphics('Imagenes/11.png')
+```
+
+---
+
+La gente usa Shiny para:
+
+- Crear cuadros de mando que realicen un seguimiento de los indicadores de rendimiento importantes y faciliten la obtención de resultados empresariales.
+
+- Comunicar modelos complejos a una audiencia no técnica con visualizaciones informativas y análisis interactivos.
+
+- Proporcionar análisis de datos de autoservicio para flujos de trabajo comunes, como reemplazar solicitudes de correo electrónico con una aplicación Shiny que permite a las personas carguen sus propios datos y realizar análisis estándar.
+
+- Crear demos interactivos para enseñar conceptos de estadística y ciencia de datos que permitan a los alumnos modificar las entradas y observar los efectos posteriores de esos cambios en un análisis.
+
+
+En resumen, Shiny le brinda la posibilidad de transmitir algunos de tus superpoderesen  R a cualquiera que pueda usar la web.
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='20%'}
+knitr::include_graphics('Imagenes/1.png')
+```
+
+---
+class: center, middle, hide_logo
+
+# 2. Primeros pasos 
+
+---
+
+# Tu primera aplicación Shiny
+
+A continuación, crearemos una aplicación Shiny simple. Aprenderemos sobre las dos componentes clave de cada aplicación Shiny: la **IU** (abreviatura de interfaz de usuario) que define cómo se ve su aplicación y la función del **SERVER** que define cómo funciona su aplicación. 
+
+Si aún no ha instalado Shiny, instálelo ahora con:
+
+```{r,eval=F}
+install.packages("shiny")
+library("shiny")
+```
+
+Hay varias formas de crear una aplicación Shiny. La más simple es crear un nuevo directorio para su aplicación y poner un solo archivo llamado app.R en él. 
+
+**Consejo de RStudio**: clic en Archivo | Nuevo proyecto, luego seleccione Nuevo directorio y Aplicación web shiny o, si ya ha creado el archivo app.R, puede agregar rápidamente el texto estándar de la aplicación escribiendo "shinyapp" y presionando Shift + Tab.
+
+Pruébelo creando un nuevo directorio y agregando un archivo app.R que se ve así: [Primera app](https://karenpcalva.shinyapps.io/1PrimeraApp/)
+
+---
+class: center, middle, hide_logo
+# 3. Tu primera aplicación Shiny
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='30%'}
+knitr::include_graphics('Imagenes/app1.png')
+```
+Antes de cerrar la aplicación, vuelva a RStudio y mire la consola R. Notarás que dice algo como:
+
+**Listening on http://127.0.0.1:3827**.
+
+Esto le indica la URL donde se puede encontrar su aplicación: 127.0.0.1 es una dirección estándar que significa "esta computadora" y 3827 es un número de puerto asignado al azar. Puede ingresar esa URL en cualquier navegador web compatible1 para abrir otra copia de su aplicación.
+
+También observe que R está ocupado: el indicador de R no es visible y la barra de herramientas de la consola muestra un icono de señal de *stop*. Mientras se ejecuta una aplicación Shiny, se "bloquea" la consola R. Esto significa que no puede ejecutar nuevos comandos en la consola R hasta que la aplicación Shiny se detenga.
+
+El flujo de trabajo básico del desarrollo de la aplicación Shiny es escribir un código, iniciar la aplicación, experimentar con la aplicación, reproducir la aplicación, escribir más código… 
+
+---
+
+class: center, middle, hide_logo
+# 3. Agregando controles en el UI
+
+---
+A continuación, agregaremos algunas entradas y salidas a nuestra interfaz de usuario, vamos a crear una aplicación muy simple que le muestre todos los *data.frame* incluidos en el paquete de *datsets*.
+
+Reemplace su interfaz de usuario con este código: 
+
+```{r,eval=F}
+ui <- fluidPage(
+  selectInput("dataset", label = "Dataset", choices = ls("package:datasets")),
+  verbatimTextOutput("summary"),
+  tableOutput("table")
+)
+```
+
+
+**fluidPage()** es una función de diseño que configura la estructura visual básica de la página. 
+
+**selectInput()** es un control de entrada que permite al usuario interactuar con la aplicación proporcionando un valor. En este caso, es un cuadro de selección con la etiqueta "Dataset" y le permite elegir uno de los *dataframes* integrados que vienen con R. 
+
+**verbatimTextOutput()** y **tableOutput()** son controles de salida que le dicen a Shiny dónde colocar la salida renderizada. *verbatimTextOutput()* muestra código y *tableOutput()* muestra tablas. 
+
+Casi todos los resultados que escribirá en el **ui** seguirán este mismo patrón:
+
+```{r,eval=F}
+output$ID <- renderTYPE({
+  # Expression that generates whatever kind of output
+  # renderTYPE expects
+})
+``` 
+
+---
+
+class: center, middle, hide_logo
+# Agregando funciones del SERVER
+
+---
+A continuación, daremos vida a las salidas definiéndolas en la función del *server**. Shiny usa programación reactiva para hacer que las aplicaciones sean interactivas.
+
+Reemplace su función de *server** vacía con esto: 
+
+```{r,eval=F}
+server <- function(input, output, session) {
+  output$summary <- renderPrint({
+    dataset <- get(input$dataset, "package:datasets")
+    summary(dataset)
+  })
+  
+  output$table <- renderTable({
+    dataset <- get(input$dataset, "package:datasets")
+    dataset
+  })
+}
+```
+
+Casi todos los resultados que escribirá en el **server** seguirán este mismo patrón:
+
+
+```{r,eval=F}
+output$ID <- renderTYPE({
+  # Expression that generates whatever kind of output
+  # renderTYPE expects
+})
+``` 
+
+El lado izquierdo del operador de asignación (<-), *output$ID*, indica que está proporcionando un objeto de salida único. El lado derecho de la asignación usa una función de renderización específica.
+
+---
+
+Cada función **render** está diseñada para trabajar con un tipo particular de salida que se pasa a una función **Output**. En este caso, usamos *renderPrint()* para capturar y mostrar un resumen estadístico de los datos con texto de ancho fijo y *renderTable()* para mostrar el *data.frame* real en una tabla.
+
+La app se verá así: [Server y UI app](https://karenpcalva.shinyapps.io/2ServerUIapp/)
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='40%'}
+knitr::include_graphics('Imagenes/app2.png')
+```
+
+Incluso en este ejemplo simple, tenemos un código que está duplicado: la siguiente línea está presente en ambas salidas.
+
+
+```{r,eval=F}
+dataset <- get(input$dataset, "package:datasets")
+``` 
+
+---
+
+En todo tipo de programación, es una mala práctica tener código duplicado; puede ser un desperdicio computacional y, lo que es más importante, aumenta la dificultad de mantener o depurar el código. No es tan importante aquí, pero quería ilustrar la idea básica en un contexto muy simple.
+
+Creas una expresión reactiva envolviendo un bloque de código en reactivo ({...}) y asignándolo a una variable, y usas una expresión reactiva llamándola como una función. Pero si bien parece que estás llamando a una función, una expresión reactiva tiene una diferencia importante: solo se ejecuta la primera vez que se llama y luego almacena en caché su resultado hasta que necesita ser actualizado.
+
+Entonces podemos actualizar el **server** así:
+
+```{r,eval=F}
+server <- function(input, output, session) {
+  dataset <- reactive({
+    get(input$dataset, "package:datasets")
+  })
+
+  output$summary <- renderPrint({
+    summary(dataset())
+  })
+  
+  output$table <- renderTable({
+    dataset()
+  })
+}
+``` 
+
+Y la app actualizada así: [ExpresionesReactivas](https://karenpcalva.shinyapps.io/3ExpresionReactiva/)
+
+
+---
+
+class: inverse, center, middle, hide_logo
+#Inputs
+
+---
+Todas las funciones de entrada tienen el mismo primer argumento: inputId. Este es el identificador utilizado para conectar el front-end con el back-end: si su interfaz de usuario tiene una entrada con ID "nombre", la función del servidor accederá a ella con la entrada **$nombre**.
+
+El inputId tiene dos consideraciones:
+
+- Debe ser una cadena simple que contenga solo letras, números y guiones bajos (¡no se permiten espacios, guiones, puntos u otros caracteres especiales!). Nómbrelo como lo haría con una variable en R.
+
+- Debe ser único. Si no es único, no tendrá forma de referirse a este control en la función de su servidor.
+
+- La mayoría de las funciones de entrada tienen un segundo parámetro llamado etiqueta. Esto se usa para crear una etiqueta legible por humanos para el control. Shiny no impone ninguna restricción a esta cadena, pero deberás pensarlo detenidamente para asegurarte de que los humanos puedan utilizar tu aplicación. El tercer parámetro suele ser el valor, que, cuando es posible, le permite establecer el valor predeterminado. Los demás parámetros son exclusivos del control.
+
+
+A continuación ejemplos de inputs:  [InputsOutputs](https://karenpcalva.shinyapps.io/4InputsOutputs/)
+
+---
+
+class: inverse, center, middle, hide_logo
+# Outputs
+---
+
+En Shiny, expresas la lógica de tu servidor mediante programación reactiva. La idea clave de la programación reactiva es especificar un gráfico de dependencias para que cuando cambie una entrada, todas las salidas relacionadas se actualicen automáticamente. Esto simplifica considerablemente el flujo de una aplicación, pero lleva un tiempo comprender cómo encaja todo.
+
+
+**output** es muy similar a input: también es un objeto similar a una lista nombrado según el ID de salida. La principal diferencia es que lo usa para enviar una salida en lugar de recibir una entrada. Siempre usa el objeto de salida (output) junto con una función de renderizado, como en los siguientes ejemplos:
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='40%'}
+knitr::include_graphics('Imagenes/io.png')
+```
+
+A continuación ejemplos de outputs:  [InputsOutputs](https://karenpcalva.shinyapps.io/4InputsOutputs/)
+
+---
+
+class: inverse, center, middle, hide_logo
+# Recursos adicionales
+
+---
+Algunas aplicaciones de ecuatorianos:
+    
+
+- [Pronóstico e impacto de niveles extremadamente bajos de caudal en centrales hidroeléctricas, autor: David Pachacama.](https://cristianpachacama.shinyapps.io/plataformatscluster/)
+    
+- [Calculadora actuarial, autor: David Pachacama.](https://cristianpachacama.shinyapps.io/CalculadoraActuarial/)
+- [Georreferenciación de clústers, autor: Karen Calva.](https://karenpris.shinyapps.io/MotorAnalisiticoClusterAsignacion/?_ga=2.183458722.521036344.1599614773-1655981209.1582137707)  
+- [Predicción del rendimiento académico, autor: Karen Calva.](https://karencalva.shinyapps.io/CursoNivelacionEPN/)
+  
+Recursos adicionales:
+
+- [Researching](https://michaelrosenblum.shinyapps.io/interAdapt/)
+- [GGPLOT para graficos](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+- [KABLEEXTRA para tablas](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
+- [Academy](https://tquant.eu/online-learning-contents/r-shiny-apps/)
+- [Shiny RStudio](http://shiny.rstudio.com/)
+- [Shiny dashboard](https://rstudio.github.io/shinydashboard/)
+- [Shiny material](run:https://ericrayanderson.github.io/shinymaterial/)
+
+
+---
+
+
+class: inverse, center, middle, hide_logo
+
+# FIN
+
+## Curso: Desarrollo de aplicaciones shiny 
+### Karen Calva | Sociedad Ecuatoriana de Estadística
