@@ -122,7 +122,7 @@ class: center, middle, hide_logo
 # 3. Tu primera aplicación Shiny
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='30%'}
-knitr::include_graphics('Imagenes/app1.png')
+knitr::include_graphics('Imagenes/app1.PNG')
 ```
 Antes de cerrar la aplicación, vuelva a RStudio y mire la consola R. Notarás que dice algo como:
 
@@ -211,7 +211,7 @@ Cada función **render** está diseñada para trabajar con un tipo particular de
 La app se verá así: [Server y UI app](https://karenpcalva.shinyapps.io/2ServerUIapp/)
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='40%'}
-knitr::include_graphics('Imagenes/app2.png')
+knitr::include_graphics('Imagenes/app2.PNG')
 ```
 
 Incluso en este ejemplo simple, tenemos un código que está duplicado: la siguiente línea está presente en ambas salidas.
@@ -279,7 +279,7 @@ En Shiny, expresas la lógica de tu servidor mediante programación reactiva. La
 **output** es muy similar a input: también es un objeto similar a una lista nombrado según el ID de salida. La principal diferencia es que lo usa para enviar una salida en lugar de recibir una entrada. Siempre usa el objeto de salida (output) junto con una función de renderizado, como en los siguientes ejemplos:
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='40%'}
-knitr::include_graphics('Imagenes/io.png')
+knitr::include_graphics('Imagenes/io.PNG')
 ```
 
 A continuación ejemplos de outputs:  [InputsOutputs](https://karenpcalva.shinyapps.io/4InputsOutputs/)
